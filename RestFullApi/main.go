@@ -20,6 +20,12 @@ func SetupRouter() *gin.Engine  {
 	return router
 }
 
+type Instructions struct{
+	Id int64
+	EventStatus string
+	EventName string
+}
+
 func GetInstructions(c *gin.Context)  {
 	c.JSON(200, gin.H{"ok": "GET api/v1/instructions"})
 }
