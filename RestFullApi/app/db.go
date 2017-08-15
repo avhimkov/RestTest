@@ -8,19 +8,11 @@ import (
 	"github.com/go-gorp/gorp"
 )
 
-var dbmap = initDb()
-
-type Instruction struct {
-	Id int64 `db:"id" json:"id"`
-	EventStatus string `db:"event_status" json:"event_status"`
-	EventName string `db:"event_name" json:"event_name"`
-}
-
-func initDb() *gorp.DbMap  {
-	db, err := sql.Open("mysql", "root:pass@/instructions")
+func initDb() *gorp.DbMap {
+	db, err := sql.Open("mysql", "root:password@/instructions")
 	checkErr(err, "sql.Open failed")
 
-	dbmap := &gorp.DbMap{Db:db, Dialect:gorp.MySQLDialect{"InnoDB", "UTF8"}}
+	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	dbmap.AddTableWithName(Instruction{}, "Instruction").SetKeys(true, "Id")
 
 	err = dbmap.CreateTablesIfNotExists()
@@ -28,9 +20,8 @@ func initDb() *gorp.DbMap  {
 	return dbmap
 }
 
-func checkErr(err error, msg string)  {
+func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatal(msg, err)
+		log.Fatalln(msg, err)
 	}
 }
-
