@@ -2,3 +2,9 @@ package: .
 import:
 - package: github.com/gorilla/mux
   version: ^1.4.0
+- package: github.com/mlabouardy/movies-restapi
+  subpackages:
+  - models
+- package: gopkg.in/mgo.v2
+  subpackages:
+  - bson
