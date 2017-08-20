@@ -1,12 +1,14 @@
 package RestMongo
 
 import (
-	"fmt"
+	//"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
+	"encoding/json"
+	"RestTest/RestMongo/dao"
 )
 
 type Movie struct {
@@ -17,11 +19,22 @@ type Movie struct {
 }
 
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	movies, err := dao.FindAll()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, movies)
 }
 
 func FindMovieEndpoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	params := mux.Vars(r)
+	movie, err := dao.FindById(params["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Movie ID")
+		return
+	}
+	respondWithJson(w, http.StatusOK, movie)
 }
 
 func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
@@ -40,11 +53,31 @@ func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	defer r.Body.Close()
+	var movie Movie
+	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if err := dao.Update(movie); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
 func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "not implemented yet !")
+	defer r.Body.Close()
+	var movie Movie
+	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	if err := dao.Delete(movie); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
 func main() {
