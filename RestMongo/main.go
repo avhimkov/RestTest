@@ -8,9 +8,9 @@ import (
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 	"encoding/json"
-	. "RestTest/RestMongo/dao"
-	. "RestTest/RestMongo/config"
-	. "RestTest/RestMongo/models"
+	_ "RestTest/RestMongo/dao"
+	_ "RestTest/RestMongo/config"
+	_ "RestTest/RestMongo/models"
 )
 
 var config  = Config{}
