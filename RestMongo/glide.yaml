@@ -8,3 +8,5 @@ import:
 - package: gopkg.in/mgo.v2
   subpackages:
   - bson
+- package: github.com/BurntSushi/toml
+  version: ^0.3.0
