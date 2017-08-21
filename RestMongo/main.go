@@ -8,20 +8,13 @@ import (
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 	"encoding/json"
-	_ "RestTest/RestMongo/dao"
-	_ "RestTest/RestMongo/config"
-	_ "RestTest/RestMongo/models"
+	. "RestTest/RestMongo/dao"
+	. "RestTest/RestMongo/config"
+	. "RestTest/RestMongo/models"
 )
 
 var config  = Config{}
-var dao  = MovieDAO{}
-
-type Movie struct {
-	ID          bson.ObjectId `bson:"_id" json:"id"`
-	Name        string        `bson:"name" json:"name"`
-	CoverImage  string        `bson:"cover_image" json:"cover_image"`
-	Description string        `bson:"description" json:"description"`
-}
+var dao  = MoviesDAO{}
 
 // GET list of movies
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
