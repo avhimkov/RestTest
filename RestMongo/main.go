@@ -8,8 +8,13 @@ import (
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 	"encoding/json"
-	"RestTest/RestMongo/dao"
+	. "RestTest/RestMongo/dao"
+	. "RestTest/RestMongo/config"
+	. "RestTest/RestMongo/models"
 )
+
+var config  = Config{}
+var dao  = MovieDAO{}
 
 type Movie struct {
 	ID          bson.ObjectId `bson:"_id" json:"id"`
@@ -18,6 +23,7 @@ type Movie struct {
 	Description string        `bson:"description" json:"description"`
 }
 
+// GET list of movies
 func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
 	movies, err := dao.FindAll()
 	if err != nil {
@@ -27,6 +33,7 @@ func AllMoviesEndPoint(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, movies)
 }
 
+// GET a movie by its ID
 func FindMovieEndpoint(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	movie, err := dao.FindById(params["id"])
@@ -37,6 +44,7 @@ func FindMovieEndpoint(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, movie)
 }
 
+// POST a new movie
 func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var movie Movie
@@ -52,6 +60,7 @@ func CreateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusCreated, movie)
 }
 
+// PUT update an existing movie
 func UpdateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var movie Movie
@@ -66,6 +75,7 @@ func UpdateMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
+// DELETE an existing movie
 func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var movie Movie
@@ -78,6 +88,25 @@ func DeleteMovieEndPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
+func respondWithError(w http.ResponseWriter, code int, msg string)  {
+	respondWithJson(w, code, map[string]string{"error": msg})
+}
+
+func respondWithJson(w http.ResponseWriter, code int, payload interface{})  {
+	reponse, _ :=json.Marshal(payload)
+	w.Header().Set("Context-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(reponse)
+}
+
+func init()  {
+	config.Read()
+
+	dao.Server = config.Server
+	dao.Database = config.Database
+	dao.Connect()
 }
 
 func main() {
