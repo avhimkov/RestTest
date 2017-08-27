@@ -10,7 +10,23 @@ import (
 var waitGroup sync.WaitGroup
 var data chan string
 
-func main() { }
+func main() {
+	fmt.Println("Starting the application...")
+	data = make(chan string)
+
+	for i := 0; i < 3; i++ {
+		waitGroup.Add(1)
+		go worker()
+	}
+
+	for i := 0; i < 50; i++ {
+		data <- ("Testing " + strconv.Itoa(i))
+	}
+
+	close(data)
+
+	waitGroup.Wait()
+}
 
 func worker() {
 	fmt.Println("Goroutine worker is now starting...")
